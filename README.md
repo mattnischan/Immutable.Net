@@ -47,5 +47,8 @@ Immutable.Net builds setter and cloning IL using Expressions and caches those st
 
 Immutable.Net does abstract away many of the headaches of maintaining immutable data types (i.e. copy constructors, builder versions of each type, etc.), but if you are in an extremely performance sensitive environment (real time write heavy data analysis, gaming), handrolling your immutable types may be faster. Remember, performance is a feature, premature optimization is evil!
 
+###Caveats
+Data types that are wrapped using Immutable and ImmutableBuilder must have parameterless constructors. This may change in the future.
+
 ###License
 Immutable.Net is licensed under the [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.html) license.
