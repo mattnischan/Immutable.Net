@@ -1,5 +1,6 @@
 Immutable.Net
 =============
+######Current Build Status: [![Build status](https://ci.appveyor.com/api/projects/status/yu3syp2av197wk11)](https://ci.appveyor.com/project/mattnischan/immutable-net)
 
 Immutable.Net is a lightweight library for using immutable datatypes as first class citizens in .Net (as much as the CLR will allow, anyway). Optimized for performance and size, it provides a simple API for creating and using immutable datatypes.
 
