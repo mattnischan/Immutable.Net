@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -172,6 +173,16 @@ namespace ImmutableNet.Tests
             stopwatch.Stop();
 
             var immutableTime = stopwatch.ElapsedMilliseconds;
+        }
+
+        [Fact]
+        public void Test_Immutable_Serialization()
+        {
+            var testClass = (new Immutable<TestClass>()).Modify(x => x.Test, 1);
+            string serialized = JsonConvert.SerializeObject(testClass);
+            var newTestClass = JsonConvert.DeserializeObject<Immutable<TestClass>>(serialized);
+
+            Assert.Equal(testClass.Get(x => x.Test), newTestClass.Get(x => x.Test));
         }
     }
 }

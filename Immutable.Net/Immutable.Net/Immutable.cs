@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace ImmutableNet
@@ -12,7 +13,8 @@ namespace ImmutableNet
     /// Encloses a type in an immutable construct.
     /// </summary>
     /// <typeparam name="T">The type to enclose.</typeparam>
-    public class Immutable<T> where T : new()
+    [Serializable]
+    public class Immutable<T> : ISerializable where T : new()
     {
         /// <summary>
         /// An instance of the enclosed immutable data type.
@@ -24,7 +26,7 @@ namespace ImmutableNet
         /// </summary>
         /// <typeparam name="TOutput">The immutable type for this cache.</typeparam>
         /// <typeparam name="TValue">The property type for this accessor.</typeparam>
-        public static class Accessor<TValue>
+        private static class Accessor<TValue>
         {
             /// <summary>
             /// Holds a dictionary of possible delegates for caching. Because a given
@@ -35,10 +37,19 @@ namespace ImmutableNet
         }
 
         /// <summary>
-        /// An internal caching class that holds cached delegates for cloning Immutables.
+        /// A cached delegate that clones the enclosed type.
         /// </summary>
-        /// <typeparam name="TOutput">The type of Immutable to clone.</typeparam>
-        public static Func<T, T> CloneDelegate;
+        private static Func<T, T> cloneDelegate;
+
+        /// <summary>
+        /// A cached delegate that serializes the enclosed type.
+        /// </summary>
+        private static Func<T, SerializationInfo, T> serializationDelegate;
+
+        /// <summary>
+        /// A cached delegate that deserializes the enclosed type.
+        /// </summary>
+        private static Func<T, SerializationInfo, T> deserializationDelegate;
 
         /// <summary>
         /// Creates an instance of an Immutable.
@@ -53,9 +64,25 @@ namespace ImmutableNet
         /// from a reference to the enclosed type.
         /// </summary>
         /// <param name="self"></param>
-        private Immutable(T self)
+        public Immutable(T self)
         {
             this.self = self;
+        }
+
+        /// <summary>
+        /// A private constructor used by ISerializable to deserialize the Immutable.
+        /// </summary>
+        /// <param name="info">The serialization info.</param>
+        /// <param name="context">The serialization streaming context.</param>
+        private Immutable(SerializationInfo info, StreamingContext context)
+        {
+            self = new T();
+            if(deserializationDelegate == null)
+            {
+                deserializationDelegate = DelegateBuilder.BuildDeserializationDelegate<T>();
+            }
+
+            self = deserializationDelegate(self, info);
         }
 
         /// <summary>
@@ -65,12 +92,12 @@ namespace ImmutableNet
         /// <returns></returns>
         internal static Immutable<T> Create(T self)
         {
-            if (CloneDelegate == null)
+            if (cloneDelegate == null)
             {
-                CloneDelegate = DelegateBuilder.BuildCloner<T>();
+                cloneDelegate = DelegateBuilder.BuildCloner<T>();
             }
 
-            return new Immutable<T>(CloneDelegate(self));
+            return new Immutable<T>(cloneDelegate(self));
         }
 
         /// <summary>
@@ -115,12 +142,12 @@ namespace ImmutableNet
         /// <returns>A copy of the enclosed type.</returns>
         private T Clone()
         {
-            if(CloneDelegate == null)
+            if(cloneDelegate == null)
             {
-                CloneDelegate = DelegateBuilder.BuildCloner<T>();
+                cloneDelegate = DelegateBuilder.BuildCloner<T>();
             }
 
-            return CloneDelegate(self);
+            return cloneDelegate(self);
         }
 
         /// <summary>
@@ -141,6 +168,28 @@ namespace ImmutableNet
         public ImmutableBuilder<T> ToBuilder()
         {
             return ImmutableBuilder<T>.Create(this.self);
+        }
+
+        /// <summary>
+        /// Provides serialization data for ISerializable.
+        /// </summary>
+        /// <param name="info">The serialization info.</param>
+        /// <param name="context">The serialization streaming context.</param>
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if(serializationDelegate == null)
+            {
+                serializationDelegate = DelegateBuilder.BuildSerializationDelegate<T>();
+            }
+
+            /*
+            foreach(var property in typeof(T).GetProperties())
+            {
+                info.AddValue(property.Name, property.GetValue(self, null), property.PropertyType);
+            }
+             */
+
+            serializationDelegate(self, info);
         }
     }
 }
