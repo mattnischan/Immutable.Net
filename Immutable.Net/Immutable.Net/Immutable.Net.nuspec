@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Immutable.Net</id>
-        <version>1.0</version>
+        <version>$version$</version>
         <authors>Matt Nischan</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>A lightweight library designed to help create immutable domain objects and DTOs in .Net.</description>
