@@ -9,7 +9,4 @@
       <dependencies>
       </dependencies>
     </metadata>
-    <files>
-        <file src="bin\Release\Immutable.Net.dll" target="lib\net40\Immutable.Net.dll" />
-    </files>
 </package>

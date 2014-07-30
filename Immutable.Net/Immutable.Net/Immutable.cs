@@ -182,13 +182,6 @@ namespace ImmutableNet
                 serializationDelegate = DelegateBuilder.BuildSerializationDelegate<T>();
             }
 
-            /*
-            foreach(var property in typeof(T).GetProperties())
-            {
-                info.AddValue(property.Name, property.GetValue(self, null), property.PropertyType);
-            }
-             */
-
             serializationDelegate(self, info);
         }
     }
