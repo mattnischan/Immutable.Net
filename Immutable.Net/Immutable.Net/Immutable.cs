@@ -63,8 +63,8 @@ namespace ImmutableNet
         /// A private constructor that allows a new Immutable to be built
         /// from a reference to the enclosed type.
         /// </summary>
-        /// <param name="self"></param>
-        public Immutable(T self)
+        /// <param name="self">The instance of the enclosed type to use.</param>
+        private Immutable(T self)
         {
             this.self = self;
         }
@@ -88,9 +88,9 @@ namespace ImmutableNet
         /// <summary>
         /// Creates a new instance of an Immutable using a stuffed enclosed type.
         /// </summary>
-        /// <param name="self"></param>
-        /// <returns></returns>
-        internal static Immutable<T> Create(T self)
+        /// <param name="self">The instance to create the Immutable from.</param>
+        /// <returns>A new Immutable with a cloned enclosed instance.</returns>
+        public static Immutable<T> Create(T self)
         {
             if (cloneDelegate == null)
             {

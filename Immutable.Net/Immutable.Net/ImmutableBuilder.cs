@@ -52,9 +52,10 @@ namespace ImmutableNet
         /// Modifies the enclosed instance of an ImmutableBuilder.
         /// </summary>
         /// <param name="accessor">The setter lambda.</param>
-        public void Modify(Action<T> accessor)
+        public ImmutableBuilder<T> Modify(Action<T> accessor)
         {
             accessor(self);
+            return this;
         }
 
         /// <summary>
