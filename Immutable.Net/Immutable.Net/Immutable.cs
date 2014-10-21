@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace ImmutableNet
 {
@@ -14,11 +15,13 @@ namespace ImmutableNet
     /// </summary>
     /// <typeparam name="T">The type to enclose.</typeparam>
     [Serializable]
+    [XmlType]
     public class Immutable<T> : ISerializable where T : new()
     {
         /// <summary>
         /// An instance of the enclosed immutable data type.
         /// </summary>
+        [XmlElement(Order=1)]
         private T self;
 
         /// <summary>
@@ -167,7 +170,7 @@ namespace ImmutableNet
         /// <returns>A builder instance.</returns>
         public ImmutableBuilder<T> ToBuilder()
         {
-            return ImmutableBuilder<T>.Create(this.self);
+            return ImmutableBuilder<T>.Create(Clone());
         }
 
         /// <summary>
