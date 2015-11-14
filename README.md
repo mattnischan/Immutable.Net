@@ -48,8 +48,14 @@ var newOrder = order.ToBuilder()
 ```
 Note that the ImmutableBuilder's Modify method has a slightly different signature than the Immutable version in order to allow direct and speedy access to the enclosed object's members.
 
+###How to get members back out
+Getting information back out of the enclosed class is easy:
+```
+var customerName = order.Get(x => x.CustomerName);
+```
+
 ###What About Speed?
-Immutable.Net builds setter and cloning IL using Expressions and caches those strongly typed delegates. This means that it is quite fast overall. Some memory is required to store the delegate references, but this overhead is not large. Like other libraries that use a similar strategy, the first call is expensive as the IL is built, but subsequent calls are quite cheap.
+Immutable.Net builds setter and cloning IL using Expressions and caches those strongly typed delegates. This means that it is quite fast overall. Some memory is required to store the delegate references, but this overhead is not large. Like other libraries that use a similar strategy, the first call is expensive as the IL is built, but subsequent calls are quite cheap, almost as fast as hand-rolled copy methods. The majority of the performance cost comes from garbage collection, which needs to be a concern in any immutable data environment.
 
 Immutable.Net does abstract away many of the headaches of maintaining immutable data types (i.e. copy constructors, builder versions of each type, etc.), but if you are in an extremely performance sensitive environment (real time write heavy data analysis, gaming), handrolling your immutable types may be faster. Remember, performance is a feature, premature optimization is evil!
 
