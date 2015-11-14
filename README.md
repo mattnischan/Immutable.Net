@@ -17,7 +17,12 @@ public class Order
   public string Description { get; set; }
 }
 
-var order = new Immutable<Order>();
+var order = Immutable.Create(new Order 
+{
+    OrderId = 7,
+    CustomerName = "Bobby Sandwich",
+    Description = "Ordered a meatball sub."
+});
 ```
 Then, you can alter your immutable data type like so:
 ```
