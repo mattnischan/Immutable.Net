@@ -30,8 +30,8 @@ Assert.NotEqual(order, newOrder); //Does not throw! :)
 You can also chain the Modify method to build more complex data:
 ```
 var newOrder = order.Modify(x => x.OrderId, 1)
-  .Modify(x => x.CustomerName = "Art Vandelay")
-  .Modify(x => x.Description = "Drafting supplies");
+  .Modify(x => x.CustomerName, "Art Vandelay")
+  .Modify(x => x.Description, "Drafting supplies");
 ```
 However, doing this too much causes pressure on the garbage collector, as each run of Modify creates a new instance that is, in this case, immediately discarded until the final invocation. To help combat this, Immutable.Net provider a builder class that is mutable.
 ```
