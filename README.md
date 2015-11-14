@@ -30,7 +30,7 @@ var newOrder = order.Modify(x => x.OrderId, 1);
 ```
 This will create a shallow clone of your data type, modify the new instance, and return it. Don't worry, your original instance is safe:
 ```
-Assert.NotEqual(order, newOrder); //Does not throw! :)
+Assert.AreNotSame(order, newOrder); //Does not throw! :)
 ```
 You can also chain the Modify method to build more complex data:
 ```
