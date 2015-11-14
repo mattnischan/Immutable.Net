@@ -8,8 +8,8 @@
         <description>A lightweight library designed to help create immutable domain objects and DTOs in .Net.</description>
       <dependencies>
       </dependencies>
+      <frameworkAssemblies>
+        <frameworkAssembly assemblyName="System.Xml" />
+      </frameworkAssemblies>
     </metadata>
-    <files>
-        <file src="bin\Release\Immutable.Net.dll" target="lib\net40\Immutable.Net.dll" />
-    </files>
 </package>

@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using ProtoBuf;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,10 +13,16 @@ namespace ImmutableNet.Tests
 {
     public class ImmutableTests
     {
+        [ProtoContract]
         class TestClass
         {
+            [ProtoMember(1)]
             public long Test { get; set; }
+
+            [ProtoMember(2)]
             public int Test2 { get; set; }
+
+            [ProtoMember(3)]
             public Immutable<TestClassMember> Data { get; set; }
 
             public TestClass()
@@ -22,10 +31,19 @@ namespace ImmutableNet.Tests
             }
         }
 
+        [ProtoContract]
         class TestClassMember
         {
+            [ProtoMember(1)]
             public int Member { get; set; }
+
+            [ProtoMember(2)]
             public int Member2 { get; set; }
+        }
+
+        class TestNullableClass
+        {
+            public int? Nullable { get; set; }
         }
 
         [Fact]
@@ -172,6 +190,50 @@ namespace ImmutableNet.Tests
             stopwatch.Stop();
 
             var immutableTime = stopwatch.ElapsedMilliseconds;
+        }
+
+        [Fact]
+        public void Test_Immutable_Serialization()
+        {
+            var testClass = (new Immutable<TestClass>()).Modify(x => x.Test, 1);
+            string serialized = JsonConvert.SerializeObject(testClass);
+            var newTestClass = JsonConvert.DeserializeObject<Immutable<TestClass>>(serialized);
+
+            Assert.Equal(testClass.Get(x => x.Test), newTestClass.Get(x => x.Test));
+        }
+
+        [Fact]
+        public void Test_Immutable_Protobuf_Serialization()
+        {
+            var testClass = (new Immutable<TestClass>()).Modify(x => x.Test, 1);
+
+            var stream = new MemoryStream();
+            Serializer.Serialize(stream, testClass);
+            stream.Seek(0, SeekOrigin.Begin);
+
+            var newTestClass = Serializer.Deserialize<Immutable<TestClass>>(stream);
+
+            Assert.Equal(testClass.Get(x => x.Test), newTestClass.Get(x => x.Test));
+        }
+
+        [Fact]
+        public void Test_That_ImmutableBuilder_Does_Not_Modify_Original()
+        {
+            var testClass = (new Immutable<TestClass>()).Modify(x => x.Test, 1);
+            var testClassBuilder = testClass.ToBuilder().Modify(x => x.Test = 2);
+
+            Assert.NotEqual(testClass.Get(x => x.Test), testClassBuilder.Get(x => x.Test));
+        }
+
+        [Fact]
+        public void Test_That_Modify_Can_Alter_Converted_Nullables()
+        {
+            var testClass = new Immutable<TestNullableClass>();
+            decimal? testDecimal = null;
+
+            testClass = testClass.Modify(x => x.Nullable, testDecimal);
+
+            Assert.Null(testClass.Get(x => x.Nullable));
         }
     }
 }

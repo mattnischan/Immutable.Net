@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace ImmutableNet
@@ -18,7 +19,7 @@ namespace ImmutableNet
         /// <typeparam name="TValue"></typeparam>
         /// <param name="expression"></param>
         /// <returns></returns>
-        public static Func<T, TValue, T> BuildAccessorDelegate<T, TValue>(Expression<Func<T, TValue>> expression)
+        internal static Func<T, TValue, T> BuildAccessorDelegate<T, TValue>(Expression<Func<T, TValue>> expression)
         {
             MemberExpression assignTo;
             var body = expression.Body as UnaryExpression;
@@ -61,7 +62,7 @@ namespace ImmutableNet
         /// <typeparam name="T">The type of to clone.</typeparam>
         /// <param name="obj">The instance to clone.</param>
         /// <returns>A delegate that clones an Immutable's self instance.</returns>
-        public static Func<T, T> BuildCloner<T>()
+        internal static Func<T, T> BuildCloner<T>()
         {
             var bindings = new List<MemberBinding>();
 
@@ -73,6 +74,78 @@ namespace ImmutableNet
             }
             Expression initializer = Expression.MemberInit(Expression.New(typeof(T)), bindings);
             return Expression.Lambda<Func<T, T>>(initializer, thisObject).Compile();
+        }
+
+        /// <summary>
+        /// Builds a delegate that handles passing serialization information to
+        /// GetObjectData.
+        /// </summary>
+        /// <typeparam name="T">The type to build this delegate for.</typeparam>
+        /// <returns>A delegate that populates a SerializationInfo.</returns>
+        internal static Func<T, SerializationInfo, T> BuildSerializationDelegate<T>()
+        {
+            var thisObject = Expression.Parameter(typeof(T), "obj");
+            var serializationInfo = Expression.Parameter(typeof(SerializationInfo), "serializationInfo");
+
+            var addValue = typeof(SerializationInfo).GetMethod("AddValue", new Type[] { typeof(string), typeof(object), typeof(Type) });
+            var getValue = typeof(PropertyInfo).GetMethod("GetValue", new Type[] { typeof(object), typeof(object[]) });
+
+            var expressionList = new List<Expression>();
+            foreach(var property in typeof(T).GetProperties())
+            {
+                var name = Expression.Constant(property.Name, typeof(string));
+                var value = Expression.Call(Expression.Constant(property, typeof(PropertyInfo)), getValue, 
+                    new Expression[] 
+                    { 
+                        Expression.Convert(thisObject, typeof(object)),
+                        Expression.Constant(null, typeof(object[]))
+                    }
+                );
+                var propertyType = Expression.Constant(property.PropertyType);
+
+                expressionList.Add(Expression.Call(serializationInfo, addValue, new Expression [] { name, value, propertyType }));
+            }
+            expressionList.Add(thisObject);
+
+            var block = Expression.Block(expressionList);
+            return Expression.Lambda<Func<T, SerializationInfo, T>>(block, new ParameterExpression[] { thisObject, serializationInfo }).Compile();
+        }
+
+        /// <summary>
+        /// Builds a delegate that handles passing deserialization information to
+        /// a constructor for ISerializable.
+        /// </summary>
+        /// <typeparam name="T">The type to build this delegate for.</typeparam>
+        /// <returns>A delegate that populates a SerializationInfo.</returns>
+        internal static Func<T, SerializationInfo, T> BuildDeserializationDelegate<T>()
+        {
+            var thisObject = Expression.Parameter(typeof(T), "obj");
+            var serializationInfo = Expression.Parameter(typeof(SerializationInfo), "serializationInfo");
+
+            var getValue = typeof(SerializationInfo).GetMethod("GetValue", new Type[] { typeof(string), typeof(Type) });
+            var setValue = typeof(PropertyInfo).GetMethod("SetValue", new Type[] { typeof(object), typeof(object), typeof(object[]) });
+
+            var expressionList = new List<Expression>();
+
+            foreach (var property in typeof(T).GetProperties())
+            {
+                var prop = Expression.Constant(property, typeof(PropertyInfo));
+                var name = Expression.Constant(property.Name, typeof(string));
+                var propertyType = Expression.Constant(property.PropertyType, typeof(Type));
+
+                var call = Expression.Call(prop, setValue, new Expression[] 
+                { 
+                    Expression.Convert(thisObject, typeof(object)),
+                    Expression.Call(serializationInfo, getValue, new Expression[] { name, propertyType }),
+                    Expression.Constant(null, typeof(object[]))
+                });
+
+                expressionList.Add(call);
+            }
+            expressionList.Add(thisObject);
+
+            var block = Expression.Block(expressionList);
+            return Expression.Lambda<Func<T, SerializationInfo, T>>(block, new ParameterExpression[] { thisObject, serializationInfo }).Compile();
         }
     }
 }
