@@ -13,7 +13,7 @@ namespace ImmutableNet
     /// to build an Immutable.
     /// </summary>
     /// <typeparam name="T">The enclosed type of the ImmutableBuilder.</typeparam>
-    public class ImmutableBuilder<T> where T : new()
+    public class ImmutableBuilder<T> where T : class
     {
         /// <summary>
         /// An instance of the enclosed type.
@@ -35,7 +35,7 @@ namespace ImmutableNet
         /// </summary>
         public ImmutableBuilder() 
         {
-            this.self = new T();
+            this.self = Activator.CreateInstance<T>();
         }
 
         /// <summary>

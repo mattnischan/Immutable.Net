@@ -16,7 +16,7 @@ namespace ImmutableNet
     /// <typeparam name="T">The type to enclose.</typeparam>
     [Serializable]
     [XmlType]
-    public class Immutable<T> : ISerializable where T : new()
+    public class Immutable<T> : ISerializable where T : class
     {
         /// <summary>
         /// An instance of the enclosed immutable data type.
@@ -59,7 +59,7 @@ namespace ImmutableNet
         /// </summary>
         public Immutable() 
         {
-            self = new T();
+            self = Activator.CreateInstance<T>();
         }
 
         /// <summary>
@@ -79,8 +79,8 @@ namespace ImmutableNet
         /// <param name="context">The serialization streaming context.</param>
         private Immutable(SerializationInfo info, StreamingContext context)
         {
-            self = new T();
             if(deserializationDelegate == null)
+            self = Activator.CreateInstance<T>();
             {
                 deserializationDelegate = DelegateBuilder.BuildDeserializationDelegate<T>();
             }
