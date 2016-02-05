@@ -147,5 +147,10 @@ namespace ImmutableNet
             var block = Expression.Block(expressionList);
             return Expression.Lambda<Func<T, SerializationInfo, T>>(block, new ParameterExpression[] { thisObject, serializationInfo }).Compile();
         }
+
+        internal static Func<T> BuildCreationDelegate<T>()
+        {
+            return Expression.Lambda<Func<T>>(Expression.New(typeof(T))).Compile();
+        } 
     }
 }

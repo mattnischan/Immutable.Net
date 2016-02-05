@@ -46,6 +46,13 @@ namespace ImmutableNet.Tests
             public int? Nullable { get; set; }
         }
 
+        class TestClassWithPrivateConstructor
+        {
+            private TestClassWithPrivateConstructor()
+            {
+            }
+        }
+
         [Fact]
         public void Test_That_Original_Object_Cannot_Be_Modified()
         {
@@ -234,6 +241,18 @@ namespace ImmutableNet.Tests
             testClass = testClass.Modify(x => x.Nullable, testDecimal);
 
             Assert.Null(testClass.Get(x => x.Nullable));
+        }
+
+        [Fact]
+        public void Test_That_Object_Can_Have_Private_Constructor()
+        {
+            Assert.DoesNotThrow(() => new Immutable<TestClassWithPrivateConstructor>());
+        }
+
+        [Fact]
+        public void Test_That_ImmutableBuilder_Object_Can_Have_Private_Constructor()
+        {
+            Assert.DoesNotThrow(() => new ImmutableBuilder<TestClassWithPrivateConstructor>());
         }
     }
 }

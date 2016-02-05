@@ -13,12 +13,17 @@ namespace ImmutableNet
     /// to build an Immutable.
     /// </summary>
     /// <typeparam name="T">The enclosed type of the ImmutableBuilder.</typeparam>
-    public class ImmutableBuilder<T> where T : new()
+    public class ImmutableBuilder<T> where T : class
     {
         /// <summary>
         /// An instance of the enclosed type.
         /// </summary>
         private T self;
+
+        /// <summary>
+        /// A cached delegate that calls a parameterless constructor.
+        /// </summary>
+        private static Func<T> creationDelegate;
 
         /// <summary>
         /// Creates a new Immutable builder with the supplied enclosed type instance.
@@ -35,7 +40,12 @@ namespace ImmutableNet
         /// </summary>
         public ImmutableBuilder() 
         {
-            this.self = new T();
+            if (creationDelegate == null)
+            {
+                creationDelegate = DelegateBuilder.BuildCreationDelegate<T>();
+            }
+
+            self = creationDelegate.Invoke();
         }
 
         /// <summary>
