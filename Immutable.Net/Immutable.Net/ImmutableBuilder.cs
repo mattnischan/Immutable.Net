@@ -16,7 +16,7 @@ namespace ImmutableNet
         /// </summary>
         /// <param name="self">The instance of the enclosed type to use.</param>
         /// <returns>A new ImmutableBuilder instance.</returns>
-        public static ImmutableBuilder<T> Create<T>(T self) where T : new()
+        public static ImmutableBuilder<T> Create<T>(T self) where T : class
         {
             return ImmutableBuilder<T>.Create(self);
         }

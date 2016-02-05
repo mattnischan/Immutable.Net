@@ -17,7 +17,7 @@ namespace ImmutableNet
         /// <typeparam name="T">The type to enclose.</typeparam>
         /// <param name="self">The instance to create the Immutable from.</param>
         /// <returns>A new Immutable with a cloned enclosed instance.</returns>
-        public static Immutable<T> Create<T>(T self) where T : new()
+        public static Immutable<T> Create<T>(T self) where T : class
         {
             return Immutable<T>.Create(self);
         }
