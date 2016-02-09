@@ -16,7 +16,7 @@ namespace ImmutableNet
     /// <typeparam name="T">The type to enclose.</typeparam>
     [Serializable]
     [XmlType]
-    public class Immutable<T> : ISerializable where T : new()
+    public class Immutable<T> : ISerializable where T : class
     {
         /// <summary>
         /// An instance of the enclosed immutable data type.
@@ -45,6 +45,11 @@ namespace ImmutableNet
         private static Func<T, T> cloneDelegate;
 
         /// <summary>
+        /// A cached delegate that calls a parameterless constructor.
+        /// </summary>
+        private static Func<T> creationDelegate;
+
+        /// <summary>
         /// A cached delegate that serializes the enclosed type.
         /// </summary>
         private static Func<T, SerializationInfo, T> serializationDelegate;
@@ -59,7 +64,12 @@ namespace ImmutableNet
         /// </summary>
         public Immutable() 
         {
-            self = new T();
+            if (creationDelegate == null)
+            {
+                creationDelegate = DelegateBuilder.BuildCreationDelegate<T>();
+            }
+
+            self = creationDelegate.Invoke();
         }
 
         /// <summary>
@@ -79,7 +89,13 @@ namespace ImmutableNet
         /// <param name="context">The serialization streaming context.</param>
         private Immutable(SerializationInfo info, StreamingContext context)
         {
-            self = new T();
+            if(creationDelegate == null)
+            {
+                creationDelegate = DelegateBuilder.BuildCreationDelegate<T>();
+            }
+
+            self = creationDelegate.Invoke();
+
             if(deserializationDelegate == null)
             {
                 deserializationDelegate = DelegateBuilder.BuildDeserializationDelegate<T>();
