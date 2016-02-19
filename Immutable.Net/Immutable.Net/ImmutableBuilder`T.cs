@@ -21,11 +21,6 @@ namespace ImmutableNet
         private T self;
 
         /// <summary>
-        /// A cached delegate that calls a parameterless constructor.
-        /// </summary>
-        private static Func<T> creationDelegate;
-
-        /// <summary>
         /// Creates a new Immutable builder with the supplied enclosed type instance.
         /// </summary>
         /// <param name="self">The instance of the enclosed type to use.</param>
@@ -40,12 +35,12 @@ namespace ImmutableNet
         /// </summary>
         public ImmutableBuilder() 
         {
-            if (creationDelegate == null)
+            if (DelegateCache<T>.CreationDelegate == null)
             {
-                creationDelegate = DelegateBuilder.BuildCreationDelegate<T>();
+                DelegateCache<T>.CreationDelegate = DelegateBuilder.BuildCreationDelegate<T>();
             }
 
-            self = creationDelegate.Invoke();
+            self = DelegateCache<T>.CreationDelegate.Invoke();
         }
 
         /// <summary>
