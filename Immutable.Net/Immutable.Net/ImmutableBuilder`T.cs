@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
 
 namespace ImmutableNet
 {
@@ -13,12 +7,12 @@ namespace ImmutableNet
     /// to build an Immutable.
     /// </summary>
     /// <typeparam name="T">The enclosed type of the ImmutableBuilder.</typeparam>
-    public class ImmutableBuilder<T> where T : class
+    public class ImmutableBuilder<T>
     {
         /// <summary>
         /// An instance of the enclosed type.
         /// </summary>
-        private T self;
+        private T _self;
 
         /// <summary>
         /// Creates a new Immutable builder with the supplied enclosed type instance.
@@ -35,12 +29,12 @@ namespace ImmutableNet
         /// </summary>
         public ImmutableBuilder() 
         {
-            if (DelegateCache<T>.CreationDelegate == null)
+            if(DelegateCache<T>.FactoryDelegate == null)
             {
-                DelegateCache<T>.CreationDelegate = DelegateBuilder.BuildCreationDelegate<T>();
+                DelegateCache<T>.FactoryDelegate = DelegateBuilder.BuildFactory<T>();
             }
 
-            self = DelegateCache<T>.CreationDelegate.Invoke();
+            _self = DelegateCache<T>.FactoryDelegate();
         }
 
         /// <summary>
@@ -50,7 +44,7 @@ namespace ImmutableNet
         /// <param name="self">The instance of the enclosed type to use.</param>
         private ImmutableBuilder(T self)
         {
-            this.self = self;
+            _self = self;
         }
 
         /// <summary>
@@ -59,7 +53,7 @@ namespace ImmutableNet
         /// <param name="accessor">The setter lambda.</param>
         public ImmutableBuilder<T> Modify(Action<T> accessor)
         {
-            accessor(self);
+            accessor(_self);
             return this;
         }
 
@@ -69,7 +63,7 @@ namespace ImmutableNet
         /// <returns>A new Immutable with the enclosed instance.</returns>
         public Immutable<T> ToImmutable()
         {
-            return Immutable<T>.Create(self);
+            return Immutable<T>.Create(_self);
         }
 
         /// <summary>
@@ -80,7 +74,7 @@ namespace ImmutableNet
         /// <returns>A value from the provided member.</returns>
         public TReturn Get<TReturn>(Func<T, TReturn> accessor)
         {
-            return accessor(self);
+            return accessor(_self);
         }
     }
 

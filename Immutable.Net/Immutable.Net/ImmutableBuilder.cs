@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace ImmutableNet
+﻿namespace ImmutableNet
 {
     /// <summary>
     /// A mutable container of the immutable enclosed type that can be used
@@ -16,7 +11,7 @@ namespace ImmutableNet
         /// </summary>
         /// <param name="self">The instance of the enclosed type to use.</param>
         /// <returns>A new ImmutableBuilder instance.</returns>
-        public static ImmutableBuilder<T> Create<T>(T self) where T : class
+        public static ImmutableBuilder<T> Create<T>(T self) where T : new()
         {
             return ImmutableBuilder<T>.Create(self);
         }

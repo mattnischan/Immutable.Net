@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Xml.Serialization;
 
 namespace ImmutableNet
@@ -16,25 +13,25 @@ namespace ImmutableNet
     /// <typeparam name="T">The type to enclose.</typeparam>
     [Serializable]
     [XmlType]
-    public class Immutable<T> : ISerializable where T : class
+    public class Immutable<T> : ISerializable
     {
         /// <summary>
         /// An instance of the enclosed immutable data type.
         /// </summary>
         [XmlElement(Order=1)]
-        private T self;
+        private T _self;
 
         /// <summary>
         /// Creates an instance of an Immutable.
         /// </summary>
         public Immutable() 
         {
-            if (DelegateCache<T>.CreationDelegate == null)
+            if(DelegateCache<T>.FactoryDelegate == null)
             {
-                DelegateCache<T>.CreationDelegate = DelegateBuilder.BuildCreationDelegate<T>();
+                DelegateCache<T>.FactoryDelegate = DelegateBuilder.BuildFactory<T>();
             }
 
-            self = DelegateCache<T>.CreationDelegate.Invoke();
+            _self = DelegateCache<T>.FactoryDelegate();
         }
 
         /// <summary>
@@ -44,7 +41,7 @@ namespace ImmutableNet
         /// <param name="self">The instance of the enclosed type to use.</param>
         private Immutable(T self)
         {
-            this.self = self;
+            _self = self;
         }
 
         /// <summary>
@@ -54,19 +51,19 @@ namespace ImmutableNet
         /// <param name="context">The serialization streaming context.</param>
         private Immutable(SerializationInfo info, StreamingContext context)
         {
-            if(DelegateCache<T>.CreationDelegate == null)
+            if (DelegateCache<T>.FactoryDelegate == null)
             {
-                DelegateCache<T>.CreationDelegate = DelegateBuilder.BuildCreationDelegate<T>();
+                DelegateCache<T>.FactoryDelegate = DelegateBuilder.BuildFactory<T>();
             }
 
-            self = DelegateCache<T>.CreationDelegate.Invoke();
+            _self = DelegateCache<T>.FactoryDelegate();
 
-            if(DelegateCache<T>.DeserializationDelegate == null)
+            if (DelegateCache<T>.DeserializationDelegate == null)
             {
                 DelegateCache<T>.DeserializationDelegate = DelegateBuilder.BuildDeserializationDelegate<T>();
             }
 
-            self = DelegateCache<T>.DeserializationDelegate(self, info);
+            _self = DelegateCache<T>.DeserializationDelegate(_self, info);
         }
 
         /// <summary>
@@ -81,43 +78,37 @@ namespace ImmutableNet
                 DelegateCache<T>.CloneDelegate = DelegateBuilder.BuildCloner<T>();
             }
 
-            return new Immutable<T>(DelegateCache<T>.CloneDelegate(self));
+            if (DelegateCache<T>.FactoryDelegate == null)
+            {
+                DelegateCache<T>.FactoryDelegate = DelegateBuilder.BuildFactory<T>();
+            }
+
+            return new Immutable<T>(DelegateCache<T>.CloneDelegate(DelegateCache<T>.FactoryDelegate(), self));
         }
 
         /// <summary>
         /// Modifies and returns a copy of the modified Immutable.
         /// </summary>
         /// <typeparam name="TValue">The type of the value to set.</typeparam>
-        /// <param name="assignment">A member to assign the value to.</param>
-        /// <param name="value">The value to assign.</param>
+        /// <param name="assignment">An action that assigns a new value to the immutable.</param>
         /// <returns>A new modified Immutable instance.</returns>
-        public Immutable<T> Modify<TValue>(Expression<Func<T, TValue>> assignment, TValue value)
+        public Immutable<T> Modify(Action<T> assignment)
         {
-            MemberExpression assignTo = assignment.Body as MemberExpression;
-            if (assignTo == null)
+            if (DelegateCache<T>.CloneDelegate == null)
             {
-                var body = assignment.Body as UnaryExpression;
-                if (body != null)
-                {
-                    assignTo = body.Operand as MemberExpression;
-                }
+                DelegateCache<T>.CloneDelegate = DelegateBuilder.BuildCloner<T>();
             }
 
-            if (assignTo == null)
+            if (DelegateCache<T>.DeserializationDelegate == null)
             {
-                throw new ArgumentException("Can only assign to a class member.");
+                DelegateCache<T>.DeserializationDelegate = DelegateBuilder.BuildDeserializationDelegate<T>();
             }
-            else
-            {
-                Func<T, TValue, T> accessor;
-                if(!DelegateCache<T>.Accessor<TValue>.AccessorDelegates.TryGetValue(assignTo.Member, out accessor))
-                {
-                    accessor = DelegateBuilder.BuildAccessorDelegate(assignment);
-                    DelegateCache<T>.Accessor<TValue>.AccessorDelegates.AddOrUpdate(assignTo.Member, accessor, (key, item) => accessor);
-                }
 
-                return new Immutable<T>(accessor(Clone(), value));
-            }
+            var immutable = new Immutable<T>();
+            immutable._self = DelegateCache<T>.CloneDelegate(immutable._self, _self);
+            assignment(immutable._self);
+
+            return immutable;
         }
 
         /// <summary>
@@ -126,12 +117,19 @@ namespace ImmutableNet
         /// <returns>A copy of the enclosed type.</returns>
         private T Clone()
         {
-            if(DelegateCache<T>.CloneDelegate == null)
+            if (DelegateCache<T>.FactoryDelegate == null)
+            {
+                DelegateCache<T>.FactoryDelegate = DelegateBuilder.BuildFactory<T>();
+            }
+
+            var newItem = DelegateCache<T>.FactoryDelegate();
+
+            if (DelegateCache<T>.CloneDelegate == null)
             {
                 DelegateCache<T>.CloneDelegate = DelegateBuilder.BuildCloner<T>();
             }
 
-            return DelegateCache<T>.CloneDelegate(self);
+            return DelegateCache<T>.CloneDelegate(newItem, _self);
         }
 
         /// <summary>
@@ -142,7 +140,7 @@ namespace ImmutableNet
         /// <returns>A value from the provided member.</returns>
         public TReturn Get<TReturn>(Func<T, TReturn> accessor)
         {
-            return accessor(self);
+            return accessor(_self);
         }
 
         /// <summary>
@@ -166,7 +164,18 @@ namespace ImmutableNet
                 DelegateCache<T>.SerializationDelegate = DelegateBuilder.BuildSerializationDelegate<T>();
             }
 
-            DelegateCache<T>.SerializationDelegate(self, info);
+            DelegateCache<T>.SerializationDelegate(_self, info);
+        }
+
+        /// <summary>
+        /// Returns a string that represents the current underlying object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current underlying object.
+        /// </returns>
+        public override string ToString()
+        {
+            return _self?.ToString() ?? base.ToString();
         }
     }
 }

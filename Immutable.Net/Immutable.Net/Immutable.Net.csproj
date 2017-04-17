@@ -41,7 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DelegateBuilder.cs" />
-    <Compile Include="DelegateCache`T.cs" />
+    <Compile Include="DelegateCache.cs" />
     <Compile Include="Immutable.cs" />
     <Compile Include="ImmutableBuilder.cs" />
     <Compile Include="Immutable`T.cs" />
