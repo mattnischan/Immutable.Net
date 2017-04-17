@@ -1,13 +1,13 @@
 Immutable.Net
 =============
-######Current Build Status: [![Build status](https://ci.appveyor.com/api/projects/status/yu3syp2av197wk11)](https://ci.appveyor.com/project/mattnischan/immutable-net)
+###### Current Build Status: [![Build status](https://ci.appveyor.com/api/projects/status/yu3syp2av197wk11)](https://ci.appveyor.com/project/mattnischan/immutable-net)
 
 Immutable.Net is a lightweight library for using immutable datatypes as first class citizens in .Net (as much as the CLR will allow, anyway). Optimized for performance and size, it provides a simple API for creating and using immutable datatypes.
 
-###Where To Get It
+### Where To Get It
 Immutable.Net is available as a package on [NuGet.org](http://www.nuget.org).
 
-###Using Immutable.Net
+### Using Immutable.Net
 Immutable.Net is very simple to use. At it's base, all you need to do is wrap your data type in an Immutable:
 ```
 public class Order
@@ -48,19 +48,19 @@ var newOrder = order.ToBuilder()
 ```
 Note that the ImmutableBuilder's Modify method has a slightly different signature than the Immutable version in order to allow direct and speedy access to the enclosed object's members.
 
-###How to get members back out
+### How to get members back out
 Getting information back out of the enclosed class is easy:
 ```
 var customerName = order.Get(x => x.CustomerName);
 ```
 
-###What About Speed?
+### What About Speed?
 Immutable.Net builds setter and cloning IL using Expressions and caches those strongly typed delegates. This means that it is quite fast overall. Some memory is required to store the delegate references, but this overhead is not large. Like other libraries that use a similar strategy, the first call is expensive as the IL is built, but subsequent calls are quite cheap, almost as fast as hand-rolled copy methods. The majority of the performance cost comes from garbage collection, which needs to be a concern in any immutable data environment.
 
 Immutable.Net does abstract away many of the headaches of maintaining immutable data types (i.e. copy constructors, builder versions of each type, etc.), but if you are in an extremely performance sensitive environment (real time write heavy data analysis, gaming), handrolling your immutable types may be faster. Remember, performance is a feature, premature optimization is evil!
 
-###Caveats
+### Caveats
 Data types that are wrapped using Immutable and ImmutableBuilder must have parameterless constructors. This may change in the future.
 
-###License
+### License
 Immutable.Net is licensed under the [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.html) license.
