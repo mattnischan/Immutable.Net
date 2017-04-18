@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImmutableDotNet", "src\ImmutableDotNet\ImmutableDotNet.csproj", "{679FEE54-EDAF-4488-8294-AD2382E3F95E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImmutableDotNet.Tests", "tests\ImmutableDotNet.Tests\ImmutableDotNet.Tests.csproj", "{41A06B08-EB6D-4BC5-98FA-D9140E71AF68}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4D6D9D2E-3B27-4586-810B-FB301B12758E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{AF9B8EF8-2467-4958-B31B-FDA287A761CF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{679FEE54-EDAF-4488-8294-AD2382E3F95E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{679FEE54-EDAF-4488-8294-AD2382E3F95E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{679FEE54-EDAF-4488-8294-AD2382E3F95E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{679FEE54-EDAF-4488-8294-AD2382E3F95E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41A06B08-EB6D-4BC5-98FA-D9140E71AF68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41A06B08-EB6D-4BC5-98FA-D9140E71AF68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41A06B08-EB6D-4BC5-98FA-D9140E71AF68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41A06B08-EB6D-4BC5-98FA-D9140E71AF68}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{679FEE54-EDAF-4488-8294-AD2382E3F95E} = {4D6D9D2E-3B27-4586-810B-FB301B12758E}
+		{41A06B08-EB6D-4BC5-98FA-D9140E71AF68} = {AF9B8EF8-2467-4958-B31B-FDA287A761CF}
+	EndGlobalSection
+EndGlobal
