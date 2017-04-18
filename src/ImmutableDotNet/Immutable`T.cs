@@ -11,14 +11,13 @@ namespace ImmutableNet
     /// Encloses a type in an immutable construct.
     /// </summary>
     /// <typeparam name="T">The type to enclose.</typeparam>
-    [Serializable]
-    [XmlType]
-    public class Immutable<T> : ISerializable
+    [DataContract]
+    public class Immutable<T>
     {
         /// <summary>
         /// An instance of the enclosed immutable data type.
         /// </summary>
-        [XmlElement(Order=1)]
+        [DataMember]
         private T _self;
 
         /// <summary>
@@ -42,28 +41,6 @@ namespace ImmutableNet
         private Immutable(T self)
         {
             _self = self;
-        }
-
-        /// <summary>
-        /// A private constructor used by ISerializable to deserialize the Immutable.
-        /// </summary>
-        /// <param name="info">The serialization info.</param>
-        /// <param name="context">The serialization streaming context.</param>
-        private Immutable(SerializationInfo info, StreamingContext context)
-        {
-            if (DelegateCache<T>.FactoryDelegate == null)
-            {
-                DelegateCache<T>.FactoryDelegate = DelegateBuilder.BuildFactory<T>();
-            }
-
-            _self = DelegateCache<T>.FactoryDelegate();
-
-            if (DelegateCache<T>.DeserializationDelegate == null)
-            {
-                DelegateCache<T>.DeserializationDelegate = DelegateBuilder.BuildDeserializationDelegate<T>();
-            }
-
-            _self = DelegateCache<T>.DeserializationDelegate(_self, info);
         }
 
         /// <summary>
@@ -97,11 +74,6 @@ namespace ImmutableNet
             if (DelegateCache<T>.CloneDelegate == null)
             {
                 DelegateCache<T>.CloneDelegate = DelegateBuilder.BuildCloner<T>();
-            }
-
-            if (DelegateCache<T>.DeserializationDelegate == null)
-            {
-                DelegateCache<T>.DeserializationDelegate = DelegateBuilder.BuildDeserializationDelegate<T>();
             }
 
             var immutable = new Immutable<T>();
@@ -150,21 +122,6 @@ namespace ImmutableNet
         public ImmutableBuilder<T> ToBuilder()
         {
             return ImmutableBuilder<T>.Create(Clone());
-        }
-
-        /// <summary>
-        /// Provides serialization data for ISerializable.
-        /// </summary>
-        /// <param name="info">The serialization info.</param>
-        /// <param name="context">The serialization streaming context.</param>
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if(DelegateCache<T>.SerializationDelegate == null)
-            {
-                DelegateCache<T>.SerializationDelegate = DelegateBuilder.BuildSerializationDelegate<T>();
-            }
-
-            DelegateCache<T>.SerializationDelegate(_self, info);
         }
 
         /// <summary>

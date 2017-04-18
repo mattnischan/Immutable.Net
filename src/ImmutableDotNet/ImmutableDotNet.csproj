@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>Immutable.Net</PackageId>
+    <Authors>Matt Nischan</Authors>
+    <Company />
+    <Product />
+    <Description>A lightweight library designed to help create immutable domain objects and DTOs in .Net.</Description>
+    <Copyright>Apache 2.0</Copyright>
+    <PackageProjectUrl>https://github.com/mattnischan/Immutable.Net</PackageProjectUrl>
+    <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0.html</PackageLicenseUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Reflection" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>
