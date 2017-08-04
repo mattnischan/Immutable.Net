@@ -113,7 +113,7 @@ namespace ImmutableNet
         public TReturn Get<TReturn>(Expression<Func<T, TReturn>> accessor)
         {
             var prop = (PropertyInfo)((MemberExpression)accessor.Body).Member;
-            return (TReturn)prop.GetValue(accessor);
+            return (TReturn)prop.GetValue(_self);
         }
 
         /// <summary>
