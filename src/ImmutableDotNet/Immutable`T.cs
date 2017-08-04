@@ -108,11 +108,11 @@ namespace ImmutableNet
         /// Gets a value from the Immutable.
         /// </summary>
         /// <typeparam name="TReturn">The type of the value to return.</typeparam>
-        /// <param name="accessor">A lambda containing the member to return.</param>
+        /// <param name="accessor">A lambda expression containing the member to return.</param>
         /// <returns>A value from the provided member.</returns>
-        public TReturn Get<TReturn>(Func<T, TReturn> accessor)
+        public TReturn Get<TReturn>(Expression<Func<T, TReturn>> accessor)
         {
-            return accessor(_self);
+            return accessor.Compile()(_self);
         }
 
         /// <summary>
