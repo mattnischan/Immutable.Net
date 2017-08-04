@@ -112,7 +112,8 @@ namespace ImmutableNet
         /// <returns>A value from the provided member.</returns>
         public TReturn Get<TReturn>(Expression<Func<T, TReturn>> accessor)
         {
-            return accessor.Compile()(_self);
+            var prop = (PropertyInfo)((MemberExpression)accessor.Body).Member;
+            return (TReturn)prop.GetValue(accessor);
         }
 
         /// <summary>
