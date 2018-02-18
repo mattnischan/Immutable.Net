@@ -80,6 +80,9 @@ serializerSettings.Converters.Add(new ImmutableJsonConverter());
 var json = JsonConvert.SerializeObject(someImmutable, serializerSettings);
 ```
 
+### Using with protobuf-net
+Immutable.Net is compatible with protobuf-net out of the box. No additional configuration is necessary.
+
 ### What About Speed?
 Immutable.Net builds setter and cloning IL using Expressions and caches those strongly typed delegates. This means that it is quite fast overall. Some memory is required to store the delegate references, but this overhead is not large. Like other libraries that use a similar strategy, the first call is expensive as the IL is built, but subsequent calls are quite cheap, almost as fast as hand-rolled copy methods. The majority of the performance cost comes from garbage collection, which needs to be a concern in any immutable data environment.
 
