@@ -1,8 +1,10 @@
 ﻿using ImmutableDotNet.Serialization.Newtonsoft;
 using Newtonsoft.Json;
+using ProtoBuf;
 using Shouldly;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Text;
 using Xunit;
 
@@ -40,10 +42,13 @@ namespace ImmutableNet.Tests
             }
         }
 
+        [DataContract]
         class TestClassMember
         {
+            [DataMember(Order = 1)]
             public int Member { get; set; }
 
+            [DataMember(Order = 2)]
             public int Member2 { get; set; }
         }
 
@@ -175,6 +180,22 @@ namespace ImmutableNet.Tests
 
             immutable.Get(x => x.Member).ShouldBe(1);
             immutable.Get(x => x.Member2).ShouldBe(0);
+        }
+
+        [Fact]
+        public void Test_Protobuf_Serialization_Round_Trip()
+        {
+            var testClass = new Immutable<TestClassMember>();
+            testClass = testClass.Modify(x => x.Member = 1);
+
+            var stream = new MemoryStream();
+            Serializer.Serialize(stream, testClass);
+
+            stream.Seek(0, SeekOrigin.Begin);
+            var deserialized = Serializer.Deserialize<Immutable<TestClassMember>>(stream);
+
+            deserialized.Get(x => x.Member).ShouldBe(1);
+            deserialized.Get(x => x.Member2).ShouldBe(0);
         }
     }
 }

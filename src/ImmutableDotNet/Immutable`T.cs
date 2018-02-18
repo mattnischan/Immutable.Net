@@ -21,7 +21,7 @@ namespace ImmutableNet
         /// <summary>
         /// An instance of the enclosed immutable data type.
         /// </summary>
-        [DataMember]
+        [DataMember(Order = 1)]
         [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
         private T _self;
 
