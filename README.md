@@ -5,11 +5,11 @@ Immutable.Net
 Immutable.Net is a lightweight library for using immutable datatypes as first class citizens in .Net (as much as the CLR will allow, anyway). Optimized for performance and size, it provides a simple API for creating and using immutable datatypes.
 
 ### Where To Get It
-Immutable.Net is available as a package on [NuGet.org](http://www.nuget.org).
+Immutable.Net is available as a package on [NuGet.org](https://www.nuget.org/packages/Immutable.Net).
 
 ### Using Immutable.Net
 Immutable.Net is very simple to use. At it's base, all you need to do is wrap your data type in an Immutable:
-```
+```csharp
 public class Order
 {
   public int OrderId { get; set; }
@@ -25,21 +25,21 @@ var order = Immutable.Create(new Order
 });
 ```
 Then, you can alter your immutable data type like so:
-```
+```csharp
 var newOrder = order.Modify(x => x.OrderId = 1);
 ```
 This will create a shallow clone of your data type, modify the new instance, and return it. Don't worry, your original instance is safe:
-```
+```csharp
 Assert.AreNotSame(order, newOrder); //Does not throw! :)
 ```
 You can also chain the Modify method to build more complex data:
-```
+```csharp
 var newOrder = order.Modify(x => x.OrderId = 1)
   .Modify(x => x.CustomerName = "Art Vandelay")
   .Modify(x => x.Description = "Drafting supplies");
 ```
 However, doing this too much causes pressure on the garbage collector, as each run of Modify creates a new instance that is, in this case, immediately discarded until the final invocation. To help combat this, Immutable.Net provider a builder class that is mutable.
-```
+```csharp
 var newOrder = order.ToBuilder()
   .Modify(x => x.OrderId = 1)
   .Modify(x => x.CustomerName = "Art Vandelay")
@@ -49,8 +49,35 @@ var newOrder = order.ToBuilder()
 
 ### How to get members back out
 Getting information back out of the enclosed class is easy:
-```
+```csharp
 var customerName = order.Get(x => x.CustomerName);
+```
+
+### Using with JSON.Net
+The [Immutable.Net.Serialization.Newtonsoft package](https://www.nuget.org/packages/Immutable.Net.Serialization.Newtonsoft) contains a `ImmutableJsonConverter` that allows Immutable instances to be serialized and deserialized as if they were their enclosed types. So, instead of this:
+```json
+{
+  "_self": {
+    "Property1": "someValue",
+    "Property2": "someValue"
+  }
+}
+```
+
+You will instead get this:
+```json
+{
+  "Property1": "someValue",
+  "Property2": "someValue"
+}
+```
+
+In order to use it, simply add the converter to your serializer settings:
+```csharp
+var serializerSettings = new JsonSerializerSettings();
+serializerSettings.Converters.Add(new ImmutableJsonConverter());
+
+var json = JsonConvert.SerializeObject(someImmutable, serializerSettings);
 ```
 
 ### What About Speed?
