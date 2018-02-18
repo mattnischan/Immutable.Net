@@ -1,6 +1,9 @@
-﻿using Shouldly;
+﻿using ImmutableDotNet.Serialization.Newtonsoft;
+using Newtonsoft.Json;
+using Shouldly;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using Xunit;
 
 namespace ImmutableNet.Tests
@@ -146,6 +149,32 @@ namespace ImmutableNet.Tests
             testClass = testClass.Modify(x => x.Nullable = (int?)testDecimal);
 
             testClass.Get(x => x.Nullable).ShouldBeNull();
+        }
+
+        [Fact]
+        public void Test_That_JSON_NET_Serialization_Is_Correct()
+        {
+            var testClass = new Immutable<TestClassMember>();
+            testClass = testClass.Modify(x => x.Member = 1);
+
+            var settings = new JsonSerializerSettings();
+            settings.Converters.Add(new ImmutableJsonConverter());
+
+            var json = JsonConvert.SerializeObject(testClass, settings);
+            json.ShouldBe(@"{""Member"":1,""Member2"":0}");
+        }
+
+        [Fact]
+        public void Test_That_JSON_NET_Deserialization_Is_Correct()
+        {
+            var settings = new JsonSerializerSettings();
+            settings.Converters.Add(new ImmutableJsonConverter());
+
+            var json = @"{""Member"":1,""Member2"":0}";
+            var immutable = JsonConvert.DeserializeObject<Immutable<TestClassMember>>(json, settings);
+
+            immutable.Get(x => x.Member).ShouldBe(1);
+            immutable.Get(x => x.Member2).ShouldBe(0);
         }
     }
 }
