@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
@@ -18,6 +22,7 @@ namespace ImmutableNet
         /// An instance of the enclosed immutable data type.
         /// </summary>
         [DataMember]
+        [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
         private T _self;
 
         /// <summary>
