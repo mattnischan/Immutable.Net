@@ -47,7 +47,7 @@ namespace ImmutableDotNet.Serialization.Newtonsoft
             var wrappedType = objectType.GetGenericArguments()[0];
 
             var instance = serializer.Deserialize(reader, wrappedType);
-            var factory = _factories.GetOrAdd(wrappedType, BuildFactory(wrappedType));
+            var factory = _factories.GetOrAdd(wrappedType, type => BuildFactory(type));
 
             return factory(instance);
         }
@@ -61,7 +61,7 @@ namespace ImmutableDotNet.Serialization.Newtonsoft
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             var immutableType = value.GetType();
-            var accessor = _accessors.GetOrAdd(immutableType, BuildAccessor(immutableType));
+            var accessor = _accessors.GetOrAdd(immutableType, type => BuildAccessor(type));
 
             var wrappedInstance = accessor(value);
             serializer.Serialize(writer, wrappedInstance);
