@@ -110,6 +110,18 @@ namespace ImmutableNet.Tests
         }
 
         [Fact]
+        public void Test_That_Getting_Self_Returns_Clone()
+        {
+            var testClass = new Immutable<TestClass>();
+            testClass = testClass.Modify(x => x.Test = 5);
+
+            var self = testClass.Get(x => x);
+            self.Test = 6;
+
+            testClass.Get(x => x.Test).ShouldNotBe(self.Test);
+        }
+
+        [Fact]
         public void Test_That_Builder_Modifies_Original_Instance()
         {
             var testClass = (new Immutable<TestClass>()).ToBuilder();
