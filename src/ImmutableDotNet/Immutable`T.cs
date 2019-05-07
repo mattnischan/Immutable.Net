@@ -121,6 +121,24 @@ namespace ImmutableNet
         }
 
         /// <summary>
+        /// Gets a value from the Immutable. If the value is the enclosed instance, a clone
+        /// of the enclosed instance will be returned.
+        /// </summary>
+        /// <typeparam name="TReturn">The type of the value to return.</typeparam>
+        /// <param name="accessor">A lambda containing the member to return.</param>
+        /// <returns>A value from the provided member.</returns>
+        public T Get(Func<T, T> accessor)
+        {
+            var returnValue = accessor(_self);
+            if(returnValue != null && returnValue.Equals(_self))
+            {
+                return Clone();
+            }
+
+            return returnValue;
+        }
+
+        /// <summary>
         /// Creates a builder instance of the Immutable.
         /// </summary>
         /// <returns>A builder instance.</returns>
