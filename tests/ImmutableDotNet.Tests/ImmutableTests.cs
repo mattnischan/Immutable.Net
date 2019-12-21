@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json;
 using Xunit;
 
 namespace ImmutableNet.Tests
@@ -189,6 +190,32 @@ namespace ImmutableNet.Tests
 
             var json = @"{""Member"":1,""Member2"":0}";
             var immutable = JsonConvert.DeserializeObject<Immutable<TestClassMember>>(json, settings);
+
+            immutable.Get(x => x.Member).ShouldBe(1);
+            immutable.Get(x => x.Member2).ShouldBe(0);
+        }
+
+        [Fact]
+        public void Test_That_System_Text_Json_Serialization_Is_Correct()
+        {
+            var testClass = new Immutable<TestClassMember>();
+            testClass = testClass.Modify(x => x.Member = 1);
+
+            var settings = new JsonSerializerOptions();
+            settings.Converters.Add(new ImmutableDotNet.Serialization.Json.ImmutableJsonConverter());
+
+            var json = System.Text.Json.JsonSerializer.Serialize(testClass, settings);
+            json.ShouldBe(@"{""Member"":1,""Member2"":0}");
+        }
+
+        [Fact]
+        public void Test_That_System_Text_Json_Deserialization_Is_Correct()
+        {
+            var settings = new JsonSerializerOptions();
+            settings.Converters.Add(new ImmutableDotNet.Serialization.Json.ImmutableJsonConverter());
+
+            var json = @"{""Member"":1,""Member2"":0}";
+            var immutable = System.Text.Json.JsonSerializer.Deserialize<Immutable<TestClassMember>>(json, settings);
 
             immutable.Get(x => x.Member).ShouldBe(1);
             immutable.Get(x => x.Member2).ShouldBe(0);

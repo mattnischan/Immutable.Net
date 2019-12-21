@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29609.76
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImmutableDotNet", "src\ImmutableDotNet\ImmutableDotNet.csproj", "{679FEE54-EDAF-4488-8294-AD2382E3F95E}"
 EndProject
@@ -11,7 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4D6D9D2E-3B2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{AF9B8EF8-2467-4958-B31B-FDA287A761CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImmutableDotNet.Serialization.Newtonsoft", "src\ImmutableDotNet.Serialization.Newtonsoft\ImmutableDotNet.Serialization.Newtonsoft.csproj", "{E6F79654-C141-4685-AFD8-3FF471D3F0DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImmutableDotNet.Serialization.Newtonsoft", "src\ImmutableDotNet.Serialization.Newtonsoft\ImmutableDotNet.Serialization.Newtonsoft.csproj", "{E6F79654-C141-4685-AFD8-3FF471D3F0DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImmutableDotNet.Serialization.Json", "src\ImmutableDotNet.Serialization.Json\ImmutableDotNet.Serialization.Json.csproj", "{B36D77B4-B398-4495-BFB7-FCE3FA867D39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,10 @@ Global
 		{E6F79654-C141-4685-AFD8-3FF471D3F0DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6F79654-C141-4685-AFD8-3FF471D3F0DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6F79654-C141-4685-AFD8-3FF471D3F0DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B36D77B4-B398-4495-BFB7-FCE3FA867D39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B36D77B4-B398-4495-BFB7-FCE3FA867D39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B36D77B4-B398-4495-BFB7-FCE3FA867D39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B36D77B4-B398-4495-BFB7-FCE3FA867D39}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,6 +45,7 @@ Global
 		{679FEE54-EDAF-4488-8294-AD2382E3F95E} = {4D6D9D2E-3B27-4586-810B-FB301B12758E}
 		{41A06B08-EB6D-4BC5-98FA-D9140E71AF68} = {AF9B8EF8-2467-4958-B31B-FDA287A761CF}
 		{E6F79654-C141-4685-AFD8-3FF471D3F0DB} = {4D6D9D2E-3B27-4586-810B-FB301B12758E}
+		{B36D77B4-B398-4495-BFB7-FCE3FA867D39} = {4D6D9D2E-3B27-4586-810B-FB301B12758E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {20E16992-BA5B-49C9-96BB-3D1456EEC3DB}

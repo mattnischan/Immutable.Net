@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netcoreapp2.0;netcoreapp2.1;netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>Immutable.Net.Serialization.Json</PackageId>
+    <Authors>Matt Nischan</Authors>
+    <Company />
+    <Product />
+    <Description>Serialization helpers for Immutable and System.Text.Json</Description>
+    <Copyright>Apache 2.0</Copyright>
+    <PackageProjectUrl>https://github.com/mattnischan/Immutable.Net</PackageProjectUrl>
+    <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0.html</PackageLicenseUrl>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0' OR '$(TargetFramework)'=='netcoreapp2.0' OR '$(TargetFramework)'=='netcoreapp2.1'">
+    <PackageReference Include="System.Text.Json" Version="4.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ImmutableDotNet\ImmutableDotNet.csproj" />
+  </ItemGroup>
+
+</Project>
