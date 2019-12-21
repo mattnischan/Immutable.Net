@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\ImmutableDotNet.Serialization.Json\ImmutableDotNet.Serialization.Json.csproj" />
     <ProjectReference Include="..\..\src\ImmutableDotNet.Serialization.Newtonsoft\ImmutableDotNet.Serialization.Newtonsoft.csproj" />
     <ProjectReference Include="..\..\src\ImmutableDotNet\ImmutableDotNet.csproj" />
   </ItemGroup>
