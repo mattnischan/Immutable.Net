@@ -80,6 +80,17 @@ serializerSettings.Converters.Add(new ImmutableJsonConverter());
 var json = JsonConvert.SerializeObject(someImmutable, serializerSettings);
 ```
 
+### Using with System.Text.Json
+The [Immutable.Net.Serialization.Json package](https://www.nuget.org/packages/Immutable.Net.Serialization.Json) contains a `ImmutableJsonConverter` that allows Immutable instances to be serialized and deserialized as if they were their enclosed types, in the same manner as the above Json.Net package.
+
+In order to use it, add the converter to your serializer options:
+```csharp
+var serializerOptions = new JsonSerializerOptions();
+serializerOptions.Converters.Add(new ImmutableJsonConverter());
+
+var json = JsonSerializer.Serialize(someImmutable, serializerOptions);
+```
+
 ### Using with protobuf-net
 Immutable.Net is compatible with protobuf-net out of the box. No additional configuration is necessary.
 
